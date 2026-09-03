@@ -25,6 +25,12 @@ import {
 } from "lucide-react";
 
 import heroImage from "@/assets/costa-technician-hero.jpg";
+import geladeiraImg from "@/assets/geladeira.jpg";
+import lavaESecaImg from "@/assets/lava-e-seca.jpg";
+import maquinaDeLavarImg from "@/assets/maquina-de-lavar.jpg";
+import freezerImg from "@/assets/freezer.jpg";
+import adegaImg from "@/assets/adega.jpg";
+import lavaLoucasImg from "@/assets/lava-loucas.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -59,40 +65,34 @@ type FormErrors = Partial<Record<keyof z.infer<typeof bookingSchema>, string>>;
 
 const services = [
   {
-    icon: Refrigerator,
-    number: "01",
-    title: "Geladeiras & Freezers",
-    description:
-      "Diagnóstico e reparo em modelos Frost Free, Side by Side e Inverter.",
-    details: ["Falhas de refrigeração", "Vazamentos e ruídos", "Troca de componentes"],
-    accent: "cyan",
+    title: "GELADEIRA",
+    image: geladeiraImg,
+    whatsappMsg: "Olá! Gostaria de solicitar um orçamento para conserto de Geladeira.",
   },
   {
-    icon: WashingMachine,
-    number: "02",
-    title: "Lavadoras & Lava e Seca",
-    description:
-      "Manutenção mecânica e eletrônica para o seu equipamento voltar à rotina.",
-    details: ["Não centrifuga", "Vazamento de água", "Erros no painel"],
-    accent: "red",
+    title: "LAVA E SECA",
+    image: lavaESecaImg,
+    whatsappMsg: "Olá! Gostaria de solicitar um orçamento para conserto de Lava e Seca.",
   },
   {
-    icon: Fan,
-    number: "03",
-    title: "Ar-condicionado",
-    description:
-      "Instalação e manutenção para um ambiente eficiente, limpo e confortável.",
-    details: ["Instalação técnica", "Higienização completa", "Manutenção preventiva"],
-    accent: "cyan",
+    title: "MÁQUINA DE LAVAR",
+    image: maquinaDeLavarImg,
+    whatsappMsg: "Olá! Gostaria de solicitar um orçamento para conserto de Máquina de Lavar.",
   },
   {
-    icon: Wrench,
-    number: "04",
-    title: "Reparos Especializados",
-    description:
-      "Soluções precisas para sistemas de refrigeração e placas eletrônicas.",
-    details: ["Carga de gás", "Troca de compressor", "Sensores e placas"],
-    accent: "red",
+    title: "FREEZER",
+    image: freezerImg,
+    whatsappMsg: "Olá! Gostaria de solicitar um orçamento para conserto de Freezer.",
+  },
+  {
+    title: "ADEGA",
+    image: adegaImg,
+    whatsappMsg: "Olá! Gostaria de solicitar um orçamento para conserto de Adega.",
+  },
+  {
+    title: "LAVA LOUÇAS",
+    image: lavaLoucasImg,
+    whatsappMsg: "Olá! Gostaria de solicitar um orçamento para conserto de Lava-Louças.",
   },
 ] as const;
 
@@ -349,42 +349,56 @@ function Index() {
           </div>
         </section>
 
-        <section id="servicos" className="relative bg-background py-24 sm:py-28">
-          <div className="absolute inset-0 bg-grid opacity-40" />
+        <section id="servicos" className="relative bg-background py-20 sm:py-28">
+          <div className="absolute inset-0 bg-grid opacity-30" />
           <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
-            <div className="max-w-2xl">
-              <p className="eyebrow">Soluções completas</p>
-              <h2 className="section-title">Seu equipamento nas mãos de quem entende</h2>
-              <p className="section-copy">
-                Do diagnóstico ao reparo, cuidamos de cada etapa com técnica, clareza e atenção aos detalhes.
+            <div className="flex flex-col items-center text-center">
+              <h2 className="font-display text-3xl font-extrabold text-foreground sm:text-4xl lg:text-5xl">
+                Confira os nossos Serviços
+              </h2>
+              <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                AGENDE UMA VISITA TÉCNICA
               </p>
+              <div className="mt-4">
+                <Button
+                  asChild
+                  className="rounded-full bg-blue-600 px-8 py-3.5 text-xs font-extrabold uppercase tracking-wider text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 hover:shadow-blue-600/50 hover:scale-105 active:scale-95"
+                >
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    SOLICITE ORÇAMENTO
+                  </a>
+                </Button>
+              </div>
             </div>
 
-            <div className="mt-14 grid gap-4 md:grid-cols-2">
+            <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {services.map((service) => {
-                const Icon = service.icon;
-                const isCold = service.accent === "cyan";
+                const serviceWhatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                  service.whatsappMsg
+                )}`;
                 return (
                   <article
                     key={service.title}
-                    className={`service-card group ${isCold ? "service-card-cold" : "service-card-hot"}`}
+                    className="group flex flex-col items-center rounded-2xl border border-border/60 bg-surface/50 p-6 backdrop-blur-md transition-all duration-300 hover:border-blue-500/50 hover:bg-surface/80 hover:shadow-xl hover:shadow-blue-500/10"
                   >
-                    <div className="flex items-start justify-between">
-                      <span className={`grid size-12 place-items-center rounded-md border ${isCold ? "border-cold/30 bg-cold/10 text-cold" : "border-hot/30 bg-hot/10 text-hot"}`}>
-                        <Icon className="size-6" aria-hidden="true" />
-                      </span>
-                      <span className="font-display text-sm font-bold text-brand">{service.number}</span>
+                    <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-transform duration-300 group-hover:scale-[1.02]">
+                      <img
+                        src={service.image}
+                        alt={`Conserto de ${service.title}`}
+                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      />
                     </div>
-                    <h3 className="mt-7 font-display text-xl font-bold text-foreground">{service.title}</h3>
-                    <p className="mt-3 max-w-lg leading-7 text-muted-foreground">{service.description}</p>
-                    <ul className="mt-6 grid gap-2.5 sm:grid-cols-3">
-                      {service.details.map((detail) => (
-                        <li key={detail} className="flex items-center gap-2 text-sm text-foreground/80">
-                          <span className={`size-1.5 shrink-0 rounded-full ${isCold ? "bg-cold" : "bg-hot"}`} />
-                          {detail}
-                        </li>
-                      ))}
-                    </ul>
+                    <h3 className="mt-6 font-display text-lg font-extrabold uppercase tracking-wider text-foreground">
+                      {service.title}
+                    </h3>
+                    <Button
+                      asChild
+                      className="mt-4 w-full rounded-full bg-blue-600 py-3 text-xs font-extrabold uppercase tracking-wider text-white shadow-md shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-blue-600/40 hover:scale-105 active:scale-95"
+                    >
+                      <a href={serviceWhatsappUrl} target="_blank" rel="noreferrer">
+                        SOLICITE ORÇAMENTO
+                      </a>
+                    </Button>
                   </article>
                 );
               })}
