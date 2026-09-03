@@ -351,15 +351,15 @@ function Index() {
 
         <section id="servicos" className="relative bg-background py-20 sm:py-28">
           <div className="absolute inset-0 bg-grid opacity-30" />
-          <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="relative mx-auto max-w-6xl px-5 lg:px-8">
             <div className="flex flex-col items-center text-center">
-              <h2 className="font-display text-3xl font-extrabold text-foreground sm:text-4xl lg:text-5xl">
+              <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                 Confira os nossos Serviços
               </h2>
-              <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
                 AGENDE UMA VISITA TÉCNICA
               </p>
-              <div className="mt-4">
+              <div className="mt-5">
                 <Button
                   asChild
                   className="rounded-full bg-blue-600 px-8 py-3.5 text-xs font-extrabold uppercase tracking-wider text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 hover:shadow-blue-600/50 hover:scale-105 active:scale-95"
@@ -377,29 +377,24 @@ function Index() {
                   service.whatsappMsg
                 )}`;
                 return (
-                  <article
+                  <a
                     key={service.title}
-                    className="group flex flex-col items-center rounded-2xl border border-border/60 bg-surface/50 p-6 backdrop-blur-md transition-all duration-300 hover:border-blue-500/50 hover:bg-surface/80 hover:shadow-xl hover:shadow-blue-500/10"
+                    href={serviceWhatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex flex-col items-center transition-all duration-300"
                   >
-                    <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-transform duration-300 group-hover:scale-[1.02]">
+                    <div className="relative flex aspect-[4/5] w-full max-w-[280px] items-center justify-center overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-border/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-blue-500/10 group-hover:ring-blue-500/40 group-hover:-translate-y-1">
                       <img
                         src={service.image}
                         alt={`Conserto de ${service.title}`}
                         className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
-                    <h3 className="mt-6 font-display text-lg font-extrabold uppercase tracking-wider text-foreground">
+                    <h3 className="mt-5 font-display text-base font-extrabold uppercase tracking-wider text-foreground transition-colors group-hover:text-cold">
                       {service.title}
                     </h3>
-                    <Button
-                      asChild
-                      className="mt-4 w-full rounded-full bg-blue-600 py-3 text-xs font-extrabold uppercase tracking-wider text-white shadow-md shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-blue-600/40 hover:scale-105 active:scale-95"
-                    >
-                      <a href={serviceWhatsappUrl} target="_blank" rel="noreferrer">
-                        SOLICITE ORÇAMENTO
-                      </a>
-                    </Button>
-                  </article>
+                  </a>
                 );
               })}
             </div>
