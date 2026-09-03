@@ -1,24 +1,576 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
+import { z } from "zod";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Check,
+  ChevronRight,
+  Clock3,
+  Fan,
+  Gauge,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Phone,
+  Refrigerator,
+  ShieldCheck,
+  Snowflake,
+  Sparkles,
+  ThermometerSnowflake,
+  WashingMachine,
+  Wrench,
+  X,
+  Zap,
+} from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import heroImage from "@/assets/costa-technician-hero.jpg";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+const WHATSAPP_NUMBER = "5561998808223";
+const quickMessage = encodeURIComponent(
+  "Olá! Gostaria de agendar uma visita técnica da Costa Refrigeração.",
+);
+const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${quickMessage}`;
+
+const bookingSchema = z.object({
+  name: z.string().trim().min(2, "Informe seu nome completo.").max(100),
+  phone: z
+    .string()
+    .trim()
+    .min(10, "Informe um telefone válido com DDD.")
+    .max(20)
+    .regex(/^[0-9()+\-\s]+$/, "Use apenas números e símbolos de telefone."),
+  location: z.string().trim().min(2, "Informe seu bairro ou cidade.").max(100),
+  appliance: z.string().min(1, "Selecione o tipo de aparelho."),
+  issue: z.string().trim().min(8, "Descreva brevemente o problema.").max(600),
+});
+
+type FormErrors = Partial<Record<keyof z.infer<typeof bookingSchema>, string>>;
+
+const services = [
+  {
+    icon: Refrigerator,
+    number: "01",
+    title: "Geladeiras & Freezers",
+    description:
+      "Diagnóstico e reparo em modelos Frost Free, Side by Side e Inverter.",
+    details: ["Falhas de refrigeração", "Vazamentos e ruídos", "Troca de componentes"],
+    accent: "cyan",
+  },
+  {
+    icon: WashingMachine,
+    number: "02",
+    title: "Lavadoras & Lava e Seca",
+    description:
+      "Manutenção mecânica e eletrônica para o seu equipamento voltar à rotina.",
+    details: ["Não centrifuga", "Vazamento de água", "Erros no painel"],
+    accent: "red",
+  },
+  {
+    icon: Fan,
+    number: "03",
+    title: "Ar-condicionado",
+    description:
+      "Instalação e manutenção para um ambiente eficiente, limpo e confortável.",
+    details: ["Instalação técnica", "Higienização completa", "Manutenção preventiva"],
+    accent: "cyan",
+  },
+  {
+    icon: Wrench,
+    number: "04",
+    title: "Reparos Especializados",
+    description:
+      "Soluções precisas para sistemas de refrigeração e placas eletrônicas.",
+    details: ["Carga de gás", "Troca de compressor", "Sensores e placas"],
+    accent: "red",
+  },
+] as const;
+
+const differences = [
+  {
+    icon: BadgeCheck,
+    title: "Orçamento transparente",
+    text: "Você entende o diagnóstico e aprova o serviço antes de qualquer reparo.",
+  },
+  {
+    icon: Gauge,
+    title: "Diagnóstico preciso",
+    text: "Ferramentas adequadas e experiência para encontrar a causa do defeito.",
+  },
+  {
+    icon: Zap,
+    title: "Atendimento ágil",
+    text: "Visita residencial em Brasília e região, com horário combinado.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Equipe profissional",
+    text: "Técnicos uniformizados, capacitados e cuidadosos com a sua casa.",
+  },
+] as const;
+
+const brands = ["BRASTEMP", "Electrolux", "CONSUL", "SAMSUNG", "LG"];
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Conserto de Geladeiras em Brasília | Costa Refrigeração" },
+      {
+        name: "description",
+        content:
+          "Conserto de geladeiras, lavadoras e ar-condicionado em Brasília. Assistência multimarcas com visita técnica e garantia.",
+      },
+      {
+        property: "og:title",
+        content: "Costa Refrigeração | Assistência Técnica em Brasília",
+      },
+      {
+        property: "og:description",
+        content:
+          "Manutenção de geladeiras, máquinas de lavar e climatização com atendimento residencial em Brasília/DF.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <a href="#inicio" className="group flex items-center gap-3" aria-label="Costa Refrigeração — início">
+      <span className="relative grid size-10 shrink-0 place-items-center rounded-md border border-cold/40 bg-cold/10 text-cold shadow-cold transition-transform group-hover:rotate-6">
+        <Snowflake className="size-5" aria-hidden="true" />
+        <span className="absolute -right-1 -top-1 size-2 rounded-full bg-hot shadow-hot" />
+      </span>
+      {!compact && (
+        <span className="leading-none">
+          <span className="block font-display text-base font-extrabold uppercase text-foreground">
+            Costa
+          </span>
+          <span className="mt-1 block text-[0.61rem] font-bold uppercase tracking-[0.24em] text-cold">
+            Refrigeração
+          </span>
+        </span>
+      )}
+    </a>
+  );
+}
+
+function Index() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [appliance, setAppliance] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const closeMenu = () => setMenuOpen(false);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const result = bookingSchema.safeParse({
+      name: formData.get("name"),
+      phone: formData.get("phone"),
+      location: formData.get("location"),
+      appliance,
+      issue: formData.get("issue"),
+    });
+
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof FormErrors;
+        if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+    const { name, phone, location, issue } = result.data;
+    const message = [
+      "Olá, Costa Refrigeração! Gostaria de agendar uma visita técnica.",
+      "",
+      `Nome: ${name}`,
+      `Telefone: ${phone}`,
+      `Bairro/Cidade: ${location}`,
+      `Aparelho: ${appliance}`,
+      `Problema: ${issue}`,
+    ].join("\n");
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-cold selection:text-background">
+      <header className="absolute inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+          <BrandMark />
+
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
+            {[
+              ["Início", "#inicio"],
+              ["Nossos Serviços", "#servicos"],
+              ["Marcas Atendidas", "#marcas"],
+              ["Diferenciais", "#diferenciais"],
+              ["Contato", "#contato"],
+            ].map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-cold"
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="hidden lg:block">
+            <Button asChild className="h-11 bg-hot px-5 text-hot-foreground shadow-hot hover:bg-hot/90">
+              <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                <MessageCircle aria-hidden="true" />
+                Chamar no WhatsApp
+              </a>
+            </Button>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="border-border bg-surface/80 lg:hidden"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X /> : <Menu />}
+          </Button>
+        </div>
+
+        {menuOpen && (
+          <nav className="border-t border-border bg-background px-5 py-5 lg:hidden" aria-label="Navegação móvel">
+            <div className="mx-auto grid max-w-7xl gap-1">
+              {[
+                ["Início", "#inicio"],
+                ["Nossos Serviços", "#servicos"],
+                ["Marcas Atendidas", "#marcas"],
+                ["Diferenciais", "#diferenciais"],
+                ["Contato", "#contato"],
+              ].map(([label, href]) => (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={closeMenu}
+                  className="rounded-md px-3 py-3 text-sm font-semibold text-muted-foreground hover:bg-surface hover:text-foreground"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
+      </header>
+
+      <main>
+        <section id="inicio" className="relative min-h-[760px] overflow-hidden pt-20 lg:min-h-[820px]">
+          <img
+            src={heroImage}
+            alt="Técnico da Costa Refrigeração realizando diagnóstico em uma geladeira"
+            width={1600}
+            height={1008}
+            fetchPriority="high"
+            className="absolute inset-0 h-full w-full object-cover object-[63%_center]"
+          />
+          <div className="absolute inset-0 bg-hero-overlay" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-cold/50 shadow-cold" />
+
+          <div className="relative mx-auto flex min-h-[680px] max-w-7xl items-center px-5 py-16 lg:min-h-[740px] lg:px-8">
+            <div className="max-w-3xl">
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cold/30 bg-cold/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-cold backdrop-blur-md">
+                <span className="size-1.5 rounded-full bg-cold shadow-cold" />
+                Assistência técnica em Brasília/DF
+              </div>
+              <h1 className="max-w-3xl font-display text-4xl font-extrabold leading-[1.06] text-foreground sm:text-5xl lg:text-7xl">
+                Conserto rápido e especializado de <span className="text-cold">geladeiras</span> e{" "}
+                <span className="text-hot">máquinas de lavar</span>
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+                Técnicos qualificados, peças originais, garantia de serviço e atendimento no conforto da sua casa.
+              </p>
+
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Button asChild size="lg" className="h-13 bg-cold px-6 text-base font-bold text-cold-foreground shadow-cold hover:bg-cold/90">
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    <MessageCircle aria-hidden="true" />
+                    Agendar visita técnica
+                    <ArrowRight aria-hidden="true" />
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-13 border-border bg-surface/60 px-6 text-base text-foreground backdrop-blur-md hover:bg-surface-strong">
+                  <a href="#servicos">Ver serviços</a>
+                </Button>
+              </div>
+
+              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-border/70 pt-6">
+                {["Atendimento rápido", "Garantia em serviços", "Peças originais"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-sm font-semibold text-foreground/90">
+                    <Check className="size-4 text-cold" aria-hidden="true" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="marcas" className="border-b border-border bg-surface/60">
+          <div className="mx-auto max-w-7xl px-5 py-9 lg:px-8">
+            <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+              <div className="shrink-0">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Assistência multimarcas</p>
+                <p className="mt-1 text-sm text-foreground">Experiência com as principais fabricantes</p>
+              </div>
+              <div className="grid grid-cols-2 items-center gap-x-8 gap-y-5 sm:grid-cols-5 lg:flex-1 lg:justify-between">
+                {brands.map((brand) => (
+                  <span key={brand} className="text-center font-display text-base font-bold text-brand transition-colors hover:text-foreground sm:text-lg">
+                    {brand}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="servicos" className="relative bg-background py-24 sm:py-28">
+          <div className="absolute inset-0 bg-grid opacity-40" />
+          <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+            <div className="max-w-2xl">
+              <p className="eyebrow">Soluções completas</p>
+              <h2 className="section-title">Seu equipamento nas mãos de quem entende</h2>
+              <p className="section-copy">
+                Do diagnóstico ao reparo, cuidamos de cada etapa com técnica, clareza e atenção aos detalhes.
+              </p>
+            </div>
+
+            <div className="mt-14 grid gap-4 md:grid-cols-2">
+              {services.map((service) => {
+                const Icon = service.icon;
+                const isCold = service.accent === "cyan";
+                return (
+                  <article
+                    key={service.title}
+                    className={`service-card group ${isCold ? "service-card-cold" : "service-card-hot"}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <span className={`grid size-12 place-items-center rounded-md border ${isCold ? "border-cold/30 bg-cold/10 text-cold" : "border-hot/30 bg-hot/10 text-hot"}`}>
+                        <Icon className="size-6" aria-hidden="true" />
+                      </span>
+                      <span className="font-display text-sm font-bold text-brand">{service.number}</span>
+                    </div>
+                    <h3 className="mt-7 font-display text-xl font-bold text-foreground">{service.title}</h3>
+                    <p className="mt-3 max-w-lg leading-7 text-muted-foreground">{service.description}</p>
+                    <ul className="mt-6 grid gap-2.5 sm:grid-cols-3">
+                      {service.details.map((detail) => (
+                        <li key={detail} className="flex items-center gap-2 text-sm text-foreground/80">
+                          <span className={`size-1.5 shrink-0 rounded-full ${isCold ? "bg-cold" : "bg-hot"}`} />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="diferenciais" className="border-y border-border bg-surface py-24 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 lg:px-8">
+            <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+              <div className="lg:sticky lg:top-28">
+                <p className="eyebrow text-hot">Por que escolher a Costa</p>
+                <h2 className="section-title">Serviço técnico sem complicação</h2>
+                <p className="section-copy">
+                  Atendimento profissional do primeiro contato à entrega do equipamento funcionando.
+                </p>
+                <Button asChild variant="outline" className="mt-8 h-11 border-hot/40 bg-hot/5 text-foreground hover:bg-hot/10">
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    Falar com um técnico
+                    <ChevronRight aria-hidden="true" />
+                  </a>
+                </Button>
+              </div>
+
+              <div className="divide-y divide-border border-y border-border">
+                {differences.map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <article key={item.title} className="group grid gap-5 py-7 sm:grid-cols-[3rem_1fr] sm:items-start">
+                      <span className="grid size-11 place-items-center rounded-md border border-border bg-background text-cold transition-colors group-hover:border-cold/50">
+                        <Icon className="size-5" aria-hidden="true" />
+                      </span>
+                      <div>
+                        <div className="flex items-baseline justify-between gap-4">
+                          <h3 className="font-display text-lg font-bold text-foreground">{item.title}</h3>
+                          <span className="text-xs font-bold text-brand">0{index + 1}</span>
+                        </div>
+                        <p className="mt-2 leading-7 text-muted-foreground">{item.text}</p>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contato" className="relative overflow-hidden bg-background py-24 sm:py-28">
+          <div className="absolute left-0 top-0 h-px w-2/3 bg-cold/60 shadow-cold" />
+          <div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:px-8">
+            <div>
+              <p className="eyebrow">Agende sua visita</p>
+              <h2 className="section-title">Vamos resolver o problema?</h2>
+              <p className="section-copy">
+                Conte o que está acontecendo. Ao enviar, você continua a conversa diretamente pelo WhatsApp.
+              </p>
+
+              <div className="mt-10 grid gap-5">
+                <a href="tel:+5561998808223" className="group flex items-center gap-4 border-b border-border pb-5">
+                  <span className="grid size-11 place-items-center rounded-md bg-cold/10 text-cold"><Phone aria-hidden="true" /></span>
+                  <span>
+                    <span className="block text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Telefone e WhatsApp</span>
+                    <span className="mt-1 block font-display text-xl font-bold text-foreground group-hover:text-cold">(61) 99880-8223</span>
+                  </span>
+                </a>
+                <div className="flex items-center gap-4 border-b border-border pb-5">
+                  <span className="grid size-11 place-items-center rounded-md bg-hot/10 text-hot"><MapPin aria-hidden="true" /></span>
+                  <span>
+                    <span className="block text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Área de atendimento</span>
+                    <span className="mt-1 block font-semibold text-foreground">Brasília e região — Distrito Federal</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="grid size-11 place-items-center rounded-md bg-cold/10 text-cold"><Clock3 aria-hidden="true" /></span>
+                  <span>
+                    <span className="block text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Horário</span>
+                    <span className="mt-1 block font-semibold text-foreground">Seg a Sáb, das 08h às 18h</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} noValidate className="rounded-lg border border-border bg-surface/80 p-5 shadow-panel backdrop-blur-xl sm:p-8">
+              <div className="mb-7 flex items-center justify-between gap-4 border-b border-border pb-5">
+                <div>
+                  <p className="font-display text-xl font-bold text-foreground">Solicitar atendimento</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Retorno pelo WhatsApp</p>
+                </div>
+                <Sparkles className="size-5 text-hot" aria-hidden="true" />
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label="Nome completo" error={errors.name}>
+                  <Input name="name" maxLength={100} autoComplete="name" placeholder="Como podemos chamar você?" className="form-control" aria-invalid={Boolean(errors.name)} />
+                </Field>
+                <Field label="Telefone / WhatsApp" error={errors.phone}>
+                  <Input name="phone" maxLength={20} inputMode="tel" autoComplete="tel" placeholder="(61) 99999-9999" className="form-control" aria-invalid={Boolean(errors.phone)} />
+                </Field>
+                <Field label="Bairro / Cidade" error={errors.location}>
+                  <Input name="location" maxLength={100} autoComplete="address-level2" placeholder="Ex.: Águas Claras" className="form-control" aria-invalid={Boolean(errors.location)} />
+                </Field>
+                <Field label="Tipo de aparelho" error={errors.appliance}>
+                  <Select value={appliance} onValueChange={setAppliance}>
+                    <SelectTrigger className="form-control" aria-invalid={Boolean(errors.appliance)}>
+                      <SelectValue placeholder="Selecione uma opção" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Geladeira">Geladeira</SelectItem>
+                      <SelectItem value="Freezer">Freezer</SelectItem>
+                      <SelectItem value="Máquina de lavar">Máquina de lavar</SelectItem>
+                      <SelectItem value="Lava e seca">Lava e seca</SelectItem>
+                      <SelectItem value="Ar-condicionado">Ar-condicionado</SelectItem>
+                      <SelectItem value="Outro">Outro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label="Descrição do problema" error={errors.issue}>
+                    <Textarea name="issue" maxLength={600} rows={4} placeholder="Conte o que o aparelho está apresentando..." className="form-control min-h-28 resize-none" aria-invalid={Boolean(errors.issue)} />
+                  </Field>
+                </div>
+              </div>
+
+              <Button type="submit" className="mt-7 h-13 w-full bg-hot text-base font-bold text-hot-foreground shadow-hot hover:bg-hot/90">
+                <MessageCircle aria-hidden="true" />
+                Enviar e agendar pelo WhatsApp
+                <ArrowRight aria-hidden="true" />
+              </Button>
+              <p className="mt-4 text-center text-xs leading-5 text-muted-foreground">
+                Ao continuar, o WhatsApp será aberto com os dados preenchidos.
+              </p>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-border bg-surface-strong">
+        <div className="mx-auto max-w-7xl px-5 py-12 lg:px-8">
+          <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-sm">
+              <BrandMark />
+              <p className="mt-5 text-sm leading-6 text-muted-foreground">
+                Assistência técnica multimarcas para refrigeração, linha branca e climatização em Brasília/DF.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-10 text-sm">
+              <div>
+                <p className="font-bold text-foreground">Navegação</p>
+                <div className="mt-4 grid gap-3 text-muted-foreground">
+                  <a href="#servicos" className="hover:text-cold">Serviços</a>
+                  <a href="#marcas" className="hover:text-cold">Marcas</a>
+                  <a href="#diferenciais" className="hover:text-cold">Diferenciais</a>
+                </div>
+              </div>
+              <div>
+                <p className="font-bold text-foreground">Atendimento</p>
+                <div className="mt-4 grid gap-3 text-muted-foreground">
+                  <a href="tel:+5561998808223" className="hover:text-cold">(61) 99880-8223</a>
+                  <span>Seg–Sáb · 08h–18h</span>
+                  <span>Brasília/DF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2026 Costa Refrigeração. Todos os direitos reservados.</p>
+            <p>Assistência técnica independente multimarcas.</p>
+          </div>
+        </div>
+      </footer>
+
+      <Button asChild size="icon" className="whatsapp-float fixed bottom-5 right-5 z-50 size-14 rounded-full bg-success text-success-foreground shadow-success hover:bg-success/90 sm:bottom-7 sm:right-7" aria-label="Chamar a Costa Refrigeração no WhatsApp">
+        <a href={whatsappUrl} target="_blank" rel="noreferrer">
+          <MessageCircle className="size-6" aria-hidden="true" />
+        </a>
+      </Button>
     </div>
+  );
+}
+
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold text-foreground">
+      {label}
+      {children}
+      {error && <span className="text-xs font-medium text-hot" role="alert">{error}</span>}
+    </label>
   );
 }
