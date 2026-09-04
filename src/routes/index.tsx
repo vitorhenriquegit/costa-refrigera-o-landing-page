@@ -9,6 +9,7 @@ import {
   Clock3,
   Fan,
   Gauge,
+  Instagram,
   MapPin,
   Menu,
   MessageCircle,
@@ -25,6 +26,9 @@ import {
 } from "lucide-react";
 
 import heroImage from "@/assets/costa-technician-hero.jpg";
+import costaFoto from "@/assets/costa-logo-foto.png";
+import ventoinhaEmblem from "@/assets/costa-ventoinha-emblem.png";
+import costaFullLogo from "@/assets/costa-full-ventoinha-logo.png";
 import geladeiraImg from "@/assets/geladeira.jpg";
 import lavaESecaImg from "@/assets/lava-e-seca.jpg";
 import maquinaDeLavarImg from "@/assets/maquina-de-lavar.jpg";
@@ -43,6 +47,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const WHATSAPP_NUMBER = "5561998808223";
+const INSTAGRAM_URL = "https://www.instagram.com/costa_refrigeracaodf?igsi=dHV5MnhrNmxjZm1m";
+const INSTAGRAM_HANDLE = "@costa_refrigeracaodf";
 const quickMessage = encodeURIComponent(
   "Olá! Gostaria de agendar uma visita técnica da Costa Refrigeração.",
 );
@@ -149,13 +155,16 @@ export const Route = createFileRoute("/")({
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
     <a href="#inicio" className="group flex items-center gap-3" aria-label="Costa Refrigeração — início">
-      <span className="relative grid size-10 shrink-0 place-items-center rounded-md border border-cold/40 bg-cold/10 text-cold shadow-cold transition-transform group-hover:rotate-6">
-        <Snowflake className="size-5" aria-hidden="true" />
-        <span className="absolute -right-1 -top-1 size-2 rounded-full bg-hot shadow-hot" />
+      <span className="relative size-11 shrink-0 overflow-hidden rounded-full border-2 border-cold/60 bg-black p-0.5 shadow-cold transition-transform duration-300 group-hover:scale-105">
+        <img
+          src={ventoinhaEmblem}
+          alt="Costa Refrigeração Logo — Ventoinha"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:rotate-180"
+        />
       </span>
       {!compact && (
         <span className="leading-none">
-          <span className="block font-display text-base font-extrabold uppercase text-foreground">
+          <span className="block font-display text-base font-extrabold uppercase text-foreground tracking-wide">
             Costa
           </span>
           <span className="mt-1 block text-[0.61rem] font-bold uppercase tracking-[0.24em] text-cold">
@@ -164,6 +173,53 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
         </span>
       )}
     </a>
+  );
+}
+
+function BrandLogos() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 lg:justify-end">
+      {/* Consul */}
+      <div className="flex items-center gap-1 font-display text-xl sm:text-2xl font-black text-[#58a635] tracking-tight transition-transform duration-300 hover:scale-110" title="Consul">
+        <span>Consul</span>
+        <span className="size-2 rounded-full bg-[#58a635] shadow-[0_0_10px_#58a635]" />
+      </div>
+
+      {/* Electrolux */}
+      <div className="flex items-center gap-2.5 transition-transform duration-300 hover:scale-110" title="Electrolux">
+        <svg viewBox="0 0 100 100" className="size-6 sm:size-7 fill-white shrink-0">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" strokeWidth="9"/>
+          <path d="M30 32h40v9H42v9h26v9H42v9h28v9H30z" fill="currentColor"/>
+        </svg>
+        <span className="font-sans text-lg sm:text-xl font-bold tracking-tight text-white">
+          Electrolux
+        </span>
+      </div>
+
+      {/* Samsung */}
+      <div className="flex items-center transition-transform duration-300 hover:scale-110" title="Samsung">
+        <span className="font-display text-lg sm:text-xl font-black uppercase tracking-widest text-white">
+          SAMSUNG
+        </span>
+      </div>
+
+      {/* Brastemp */}
+      <div className="flex items-center justify-center rounded-lg bg-[#eb540a] px-3.5 py-1.5 shadow-md shadow-orange-950/40 transition-transform duration-300 hover:scale-110" title="Brastemp">
+        <span className="font-display text-xs sm:text-sm font-black tracking-wider text-white">
+          BRASTEMP
+        </span>
+      </div>
+
+      {/* LG */}
+      <div className="flex items-center gap-1.5 transition-transform duration-300 hover:scale-110" title="LG">
+        <div className="grid size-6 sm:size-7 place-items-center rounded-full bg-[#a50034] text-[0.65rem] sm:text-[0.75rem] font-black text-white shadow-md">
+          LG
+        </div>
+        <span className="font-display text-lg sm:text-xl font-black tracking-wider text-white">
+          LG
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -221,6 +277,7 @@ function Index() {
               ["Nossos Serviços", "#servicos"],
               ["Marcas Atendidas", "#marcas"],
               ["Diferenciais", "#diferenciais"],
+              ["Sobre o Costa", "#sobre"],
               ["Contato", "#contato"],
             ].map(([label, href]) => (
               <a
@@ -233,7 +290,13 @@ function Index() {
             ))}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-3 lg:flex">
+            <Button asChild variant="outline" className="h-11 border-pink-500/40 bg-pink-500/10 px-4 text-pink-300 hover:border-pink-500 hover:bg-pink-500/20 hover:text-white">
+              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+                <Instagram className="size-4 text-pink-400" aria-hidden="true" />
+                Instagram
+              </a>
+            </Button>
             <Button asChild className="h-11 bg-hot px-5 text-hot-foreground shadow-hot hover:bg-hot/90">
               <a href={whatsappUrl} target="_blank" rel="noreferrer">
                 <MessageCircle aria-hidden="true" />
@@ -263,6 +326,7 @@ function Index() {
                 ["Nossos Serviços", "#servicos"],
                 ["Marcas Atendidas", "#marcas"],
                 ["Diferenciais", "#diferenciais"],
+                ["Sobre o Costa", "#sobre"],
                 ["Contato", "#contato"],
               ].map(([label, href]) => (
                 <a
@@ -274,6 +338,16 @@ function Index() {
                   {label}
                 </a>
               ))}
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={closeMenu}
+                className="mt-2 flex items-center gap-2 rounded-md border border-pink-500/30 bg-pink-500/10 px-3 py-3 text-sm font-semibold text-pink-300 hover:bg-pink-500/20"
+              >
+                <Instagram className="size-4 text-pink-400" aria-hidden="true" />
+                Instagram ({INSTAGRAM_HANDLE})
+              </a>
             </div>
           </nav>
         )}
@@ -294,9 +368,25 @@ function Index() {
 
           <div className="relative mx-auto flex min-h-[680px] max-w-7xl items-center px-5 py-16 lg:min-h-[740px] lg:px-8">
             <div className="max-w-3xl">
-              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cold/30 bg-cold/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-cold backdrop-blur-md">
-                <span className="size-1.5 rounded-full bg-cold shadow-cold" />
-                Assistência técnica em Brasília/DF
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2.5 rounded-full border border-cold/40 bg-background/85 px-3.5 py-1.5 backdrop-blur-md shadow-lg">
+                  <img
+                    src={costaFoto}
+                    alt="Foto do Técnico Costa"
+                    className="size-7 rounded-full border border-cold object-cover bg-white shrink-0"
+                  />
+                  <span className="text-xs font-bold text-foreground">Costa Refrigeração</span>
+                  <BadgeCheck className="size-4 text-cold" />
+                </div>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-pink-500/40 bg-gradient-to-r from-purple-950/70 to-pink-950/70 px-3.5 py-1.5 text-xs font-bold text-pink-300 backdrop-blur-md hover:border-pink-400 hover:text-white transition-all shadow-md"
+                >
+                  <Instagram className="size-3.5 text-pink-400" />
+                  <span>{INSTAGRAM_HANDLE}</span>
+                </a>
               </div>
               <h1 className="max-w-3xl font-display text-4xl font-extrabold leading-[1.06] text-foreground sm:text-5xl lg:text-7xl">
                 Conserto rápido e especializado de <span className="text-cold">geladeiras</span> e{" "}
@@ -314,8 +404,11 @@ function Index() {
                     <ArrowRight aria-hidden="true" />
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="h-13 border-border bg-surface/60 px-6 text-base text-foreground backdrop-blur-md hover:bg-surface-strong">
-                  <a href="#servicos">Ver serviços</a>
+                <Button asChild size="lg" variant="outline" className="h-13 border-pink-500/40 bg-pink-500/10 px-6 text-base text-pink-300 backdrop-blur-md hover:border-pink-500 hover:bg-pink-500/20 hover:text-white">
+                  <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+                    <Instagram className="size-5 text-pink-400" aria-hidden="true" />
+                    Ver Instagram
+                  </a>
                 </Button>
               </div>
 
@@ -331,19 +424,15 @@ function Index() {
           </div>
         </section>
 
-        <section id="marcas" className="border-b border-border bg-surface/60">
-          <div className="mx-auto max-w-7xl px-5 py-9 lg:px-8">
-            <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-              <div className="shrink-0">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Assistência multimarcas</p>
-                <p className="mt-1 text-sm text-foreground">Experiência com as principais fabricantes</p>
+        <section id="marcas" className="border-b border-border bg-gradient-to-r from-surface via-background to-surface py-9">
+          <div className="mx-auto max-w-7xl px-5 lg:px-8">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="shrink-0 text-center lg:text-left">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-cold">Assistência multimarcas</p>
+                <p className="mt-1 text-sm font-medium text-foreground">Peças e manutenção com as principais fabricantes</p>
               </div>
-              <div className="grid grid-cols-2 items-center gap-x-8 gap-y-5 sm:grid-cols-5 lg:flex-1 lg:justify-between">
-                {brands.map((brand) => (
-                  <span key={brand} className="text-center font-display text-base font-bold text-brand transition-colors hover:text-foreground sm:text-lg">
-                    {brand}
-                  </span>
-                ))}
+              <div className="lg:flex-1">
+                <BrandLogos />
               </div>
             </div>
           </div>
@@ -441,6 +530,81 @@ function Index() {
           </div>
         </section>
 
+        <section id="sobre" className="relative border-b border-border bg-surface-strong/90 py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-5 lg:px-8">
+            <div className="relative overflow-hidden rounded-3xl border border-cold/30 bg-gradient-to-br from-surface via-background to-surface-strong p-8 shadow-2xl lg:p-12">
+              <div className="grid items-center gap-10 lg:grid-cols-[320px_1fr]">
+                <div className="relative mx-auto flex flex-col items-center">
+                  <div className="relative flex items-center justify-center">
+                    <div className="relative size-56 overflow-hidden rounded-full border-4 border-cold shadow-cold transition-transform hover:scale-105 sm:size-64">
+                      <img
+                        src={costaFoto}
+                        alt="Foto Oficial da Costa Refrigeração"
+                        className="h-full w-full object-cover bg-white"
+                      />
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 size-20 overflow-hidden rounded-full border-2 border-hot bg-black p-0.5 shadow-hot sm:size-24 transition-transform hover:rotate-45">
+                      <img
+                        src={ventoinhaEmblem}
+                        alt="Logo Ventoinha Costa Refrigeração"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <a
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-6 inline-flex items-center gap-2 rounded-full border border-pink-500/40 bg-gradient-to-r from-purple-900/40 to-pink-900/40 px-4 py-2 text-xs font-extrabold text-pink-300 shadow-md hover:border-pink-400 hover:text-white transition-all"
+                  >
+                    <Instagram className="size-4 text-pink-400" />
+                    <span>{INSTAGRAM_HANDLE}</span>
+                  </a>
+                </div>
+
+                <div className="space-y-4 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-cold/30 bg-cold/10 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-cold">
+                    <Wrench className="size-3.5" />
+                    Atendimento Profissional em Brasília/DF
+                  </div>
+                  <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                    Costa Refrigeração
+                  </h2>
+                  <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+                    Especialista em manutenção preventiva e corretiva de eletrodomésticos da linha branca. 
+                    Com anos de experiência e reputação reconhecida no Distrito Federal, o trabalho é realizado 
+                    com transparência, utilização de peças originais e garantia total dos serviços prestados.
+                  </p>
+                  <div className="grid gap-3 pt-2 sm:grid-cols-2 text-left">
+                    <div className="flex items-center gap-3 rounded-lg border border-border/80 bg-background/60 p-3">
+                      <ShieldCheck className="size-5 text-cold shrink-0" />
+                      <span className="text-xs font-semibold text-foreground">Garantia em todos os consertos</span>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-lg border border-border/80 bg-background/60 p-3">
+                      <BadgeCheck className="size-5 text-cold shrink-0" />
+                      <span className="text-xs font-semibold text-foreground">Peças originais multimarcas</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-4 pt-4 lg:justify-start">
+                    <Button asChild size="lg" className="h-12 bg-cold font-bold text-cold-foreground shadow-cold hover:bg-cold/90">
+                      <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                        <MessageCircle className="size-5" />
+                        Agendar com o Costa
+                      </a>
+                    </Button>
+                    <Button asChild size="lg" variant="outline" className="h-12 border-pink-500/40 bg-pink-500/10 text-pink-300 hover:border-pink-500 hover:bg-pink-500/20 hover:text-white">
+                      <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+                        <Instagram className="size-5 text-pink-400" />
+                        Acompanhar no Instagram
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="contato" className="relative overflow-hidden bg-background py-24 sm:py-28">
           <div className="absolute left-0 top-0 h-px w-2/3 bg-cold/60 shadow-cold" />
           <div className="mx-auto grid max-w-7xl gap-14 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 lg:px-8">
@@ -457,6 +621,20 @@ function Index() {
                   <span>
                     <span className="block text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Telefone e WhatsApp</span>
                     <span className="mt-1 block font-display text-xl font-bold text-foreground group-hover:text-cold">(61) 99880-8223</span>
+                  </span>
+                </a>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center gap-4 border-b border-border pb-5"
+                >
+                  <span className="grid size-11 place-items-center rounded-md bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white shadow-md transition-transform group-hover:scale-105">
+                    <Instagram aria-hidden="true" className="size-5" />
+                  </span>
+                  <span>
+                    <span className="block text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Instagram Oficial</span>
+                    <span className="mt-1 block font-display text-lg font-bold text-foreground transition-colors group-hover:text-cold">{INSTAGRAM_HANDLE}</span>
                   </span>
                 </a>
                 <div className="flex items-center gap-4 border-b border-border pb-5">
@@ -546,12 +724,17 @@ function Index() {
                   <a href="#servicos" className="hover:text-cold">Serviços</a>
                   <a href="#marcas" className="hover:text-cold">Marcas</a>
                   <a href="#diferenciais" className="hover:text-cold">Diferenciais</a>
+                  <a href="#sobre" className="hover:text-cold">Sobre o Costa</a>
                 </div>
               </div>
               <div>
-                <p className="font-bold text-foreground">Atendimento</p>
+                <p className="font-bold text-foreground">Redes & Contato</p>
                 <div className="mt-4 grid gap-3 text-muted-foreground">
                   <a href="tel:+5561998808223" className="hover:text-cold">(61) 99880-8223</a>
+                  <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-pink-400 transition-colors">
+                    <Instagram className="size-4 text-pink-400" />
+                    <span>{INSTAGRAM_HANDLE}</span>
+                  </a>
                   <span>Seg–Sáb · 08h–18h</span>
                   <span>Brasília/DF</span>
                 </div>
